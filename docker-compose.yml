@@ -1,0 +1,42 @@
+version: '3.6'
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: megahack-db
+    restart: always
+    tty: true
+    ports: 
+      - 3306:3306
+    volumes: 
+      - megahack-dbdata:/var/lib/mysql
+    environment: 
+      - MYSQL_DATABASE=megahack
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_USER=root
+
+  api:
+    build: ./backend/
+    container_name: megahack-api
+    entrypoint: ./backend/.docker/entrypoint.sh
+    ports:
+      - 3001:3001
+    volumes: 
+      - .:/home/node/app
+
+  web:
+    build: ./web
+    container_name: megahack-app
+    entrypoint: ./web/.docker/entrypoint.sh
+    volumes:
+      - .:/home/node/app
+    stdin_open: true
+    ports:
+      - 3000:3000
+    environment:
+      - NODE_ENV=development
+      - CHOKIDAR_USEPOLLING=true
+
+volumes: 
+  megahack-dbdata:
+    external: true
