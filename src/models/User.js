@@ -11,18 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      * This method is not a part of Sequelize lifecycle.
      * The `models/index` file will call this method automatically.
      */
-    static associate(models) {
+    static associate() {
+      // (model)
       // define association here
     }
   }
-  User.checkPassword = function (password) {
-    return bcrypt.compare(password, this.password_hash);
-  };
-  User.generateToken = function () {
-    return jwt.sign({ id: this.id }, authConfig.secret, {
-      expiresIn: authConfig.expiresIn,
-    });
-  };
   User.init(
     {
       name: DataTypes.STRING,
@@ -37,12 +30,20 @@ module.exports = (sequelize, DataTypes) => {
       modelName: 'User',
     },
   );
-  User.addHook('beforeCreate', async (user, options) => {
+  User.addHook('beforeCreate', async (user) => {
     if (user.password) {
       // eslint-disable-next-line
       user.password_hash = await bcrypt.hash(user.password, 8);
     }
   });
+  User.prototype.checkPassword = function (password) {
+    return bcrypt.compare(password, this.password_hash);
+  };
+  User.prototype.generateToken = function () {
+    return jwt.sign({ id: this.id }, authConfig.secret, {
+      expiresIn: authConfig.expiresIn,
+    });
+  };
 
   return User;
 };
