@@ -14,6 +14,7 @@ module.exports = {
     sourceType: 'module',
   },
   rules: {
+    'func-names': 0,
     'prettier/prettier': 'error',
   },
 };
