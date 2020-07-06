@@ -15,6 +15,7 @@ module.exports = {
   },
   rules: {
     'func-names': 0,
+    camelcase: 0,
     'prettier/prettier': 'error',
   },
 };

@@ -1,4 +1,4 @@
-import { User } from '../models/index';
+import { User, Interest } from '../models/index';
 
 export default {
   store: async (req, res) => {
@@ -8,8 +8,12 @@ export default {
       });
       if (userExist)
         return res.status(400).json({ error: 'User already exist' });
-      const { id, name, email } = await User.create(req.body);
-      return res.json({ id, name, email });
+      const user = await User.create(req.body);
+      const interests = await Interest.findAll({
+        where: { id: req.body.interests },
+      });
+      user.addInterests(interests);
+      return res.json(user);
     } catch (error) {
       return res.status(400).json({ error: error.message });
     }
